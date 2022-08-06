@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ProgressBar
+        android:id="@+id/progressBarList"
+        style="@style/Widget.AppCompat.Light.SearchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true" />
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeContactListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingClass">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/addContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_plus_foreground"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/add" />
+            <TextView
+                android:id="@+id/emptyList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_list"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:visibility="gone" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/contactRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+        </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</RelativeLayout>

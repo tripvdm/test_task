@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Список</string>
+    <string name="titleDelete">Удалить</string>
+    <string name="titleStatistic">Статистика</string>
+    <string name="empty_list">Список пуст</string>
+    <string name="add">Добавить</string>
+    <string name="name">Имя</string>
+    <string name="email">Email</string>
+    <string name="phone">Телефон</string>
+    <string name="deleting">Удаление</string>
+</resources>
