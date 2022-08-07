@@ -1,12 +1,17 @@
 package com.example.test_task.presenter;
 
 import android.content.Context;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.room.Room;
 
 import com.example.test_task.dao.AppDatabase;
 import com.example.test_task.dao.ContactDao;
 import com.example.test_task.model.Contact;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -23,9 +28,12 @@ public class AddContactPresenter {
         database = Room.databaseBuilder(context, AppDatabase.class, "contact").build();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void addContact(Contact contact) {
         Observable.create((ObservableOnSubscribe<Contact>) emitter -> {
             ContactDao contactDao = database.contactDao();
+            LocalDateTime localDateTime = LocalDateTime.now();
+            contact.setDate(localDateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
             contactDao.insert(contact);
             emitter.onComplete();
         }).subscribeOn(Schedulers.io())

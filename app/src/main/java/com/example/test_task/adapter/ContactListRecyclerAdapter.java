@@ -10,11 +10,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test_task.R;
-import com.example.test_task.fragment.StatisticFragment;
 import com.example.test_task.model.Contact;
 import com.example.test_task.presenter.DeletingListPresenter;
 
@@ -83,27 +81,29 @@ public class ContactListRecyclerAdapter extends RecyclerView.Adapter<ContactList
         @BindView(R.id.phone)
         TextView phone;
 
+        private final Context context;
         private final DeletingListPresenter deletingListPresenter;
 
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
-            Context context = itemView.getContext();
+            context = itemView.getContext();
             ButterKnife.bind(this, itemView);
             deletingListPresenter = new DeletingListPresenter(context);
             deletingListPresenter.attachDeletingListView(deletingListView);
-            if (delete) {
-                layoutContact.setOnClickListener(view ->
-                        new AlertDialog.Builder(context)
-                        .setMessage("Вы действительно хотите удалить контакт?")
-                        .setPositiveButton(android.R.string.yes,
-                                (dialog, whichButton) -> {
-                                    Contact contact = contactList.get(getAdapterPosition());
-                                    deletingListPresenter.deleteContact(contact);
-                                })
-                        .setNegativeButton(android.R.string.no, null).show());
-            }
+            if (delete) addListenerForLayoutContact();
+        }
+
+        private void addListenerForLayoutContact() {
+            layoutContact.setOnClickListener(view ->
+                    new AlertDialog.Builder(context)
+                            .setMessage("Вы действительно хотите удалить контакт?")
+                            .setPositiveButton(android.R.string.yes,
+                                    (dialog, whichButton) -> {
+                                        Contact contact = contactList.get(getAdapterPosition());
+                                        deletingListPresenter.deleteContact(contact);
+                                    })
+                            .setNegativeButton(android.R.string.no, null).show());
         }
 
     }
-
 }

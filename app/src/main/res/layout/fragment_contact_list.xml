@@ -32,16 +32,6 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="16dp"
                 android:contentDescription="@string/add" />
-            <TextView
-                android:id="@+id/emptyList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/empty_list"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_gravity="center"
-                android:textAlignment="center"
-                android:visibility="gone" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/contactRecyclerView"
                 android:layout_width="match_parent"

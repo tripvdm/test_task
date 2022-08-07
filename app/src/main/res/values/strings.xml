@@ -8,4 +8,7 @@
     <string name="email">Email</string>
     <string name="phone">Телефон</string>
     <string name="deleting">Удаление</string>
+    <string name="countOfRecords">Количество записей :</string>
+    <string name="dateOfFirstRecord">Время создания первой записи :</string>
+    <string name="dateOfLastRecord">Время создания последней записи :</string>
 </resources>

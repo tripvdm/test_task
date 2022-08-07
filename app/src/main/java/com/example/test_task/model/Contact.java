@@ -13,6 +13,7 @@ public class Contact implements Parcelable {
     private String name;
     private String email;
     private String phone;
+    private String date;
 
     public Contact() {}
 
@@ -65,6 +66,14 @@ public class Contact implements Parcelable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     @Override

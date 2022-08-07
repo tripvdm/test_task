@@ -11,18 +11,20 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.test_task.fragment.ContactListFragment;
 import com.example.test_task.fragment.StatisticFragment;
+import com.example.test_task.presenter.DeletingListPresenter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
-    private ActionBar actionBar;
-
+public class MainActivity extends AppCompatActivity implements DeletingListPresenter.DeletingListView {
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.navigation)
     BottomNavigationView bottomNavigationView;
+
+    private ActionBar actionBar;
+    private FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         @SuppressLint("NonConstantResourceId")
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            FragmentTransaction fragmentTransaction;
             switch (menuItem.getItemId()) {
                 case R.id.list:
                     actionBar.setTitle(R.string.app_name);
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.delete:
                     actionBar.setTitle(R.string.titleDelete);
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.content, new ContactListFragment(true));
+                    fragmentTransaction.replace(R.id.content, new ContactListFragment(MainActivity.this, true));
                     fragmentTransaction.commit();
                     return true;
                 case R.id.statistic:
@@ -69,4 +70,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void transitionToStaticsFragment() {
+        bottomNavigationView.setSelectedItemId(R.id.statistic);
+    }
 }

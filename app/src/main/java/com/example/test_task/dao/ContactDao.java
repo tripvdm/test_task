@@ -1,6 +1,7 @@
 package com.example.test_task.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -16,4 +17,7 @@ public interface ContactDao {
 
     @Insert
     void insert(Contact contact);
+
+    @Delete
+    void delete(Contact contact);
 }

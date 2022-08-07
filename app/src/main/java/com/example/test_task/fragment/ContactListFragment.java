@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +25,7 @@ import com.example.test_task.adapter.ContactListRecyclerAdapter;
 import com.example.test_task.model.Contact;
 import com.example.test_task.presenter.AddContactPresenter;
 import com.example.test_task.presenter.ContactListPresenter;
+import com.example.test_task.presenter.DeletingListPresenter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -54,17 +54,19 @@ public class ContactListFragment extends Fragment implements ContactListPresente
     @BindView(R.id.progressBarList)
     ProgressBar progressBarContactList;
 
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.emptyList)
-    TextView emptyContactList;
-
     private ContactListPresenter contactListPresenter;
     private Context context;
     private ContactListRecyclerAdapter contactListRecyclerAdapter;
-    private final boolean deleting;
+    private DeletingListPresenter.DeletingListView deletingListView;
+    private final boolean delete;
 
-    public ContactListFragment(boolean deleting) {
-        this.deleting = deleting;
+    public ContactListFragment(boolean delete) {
+        this.delete = delete;
+    }
+
+    public ContactListFragment(DeletingListPresenter.DeletingListView deletingListView, boolean delete) {
+        this.deletingListView = deletingListView;
+        this.delete = delete;
     }
 
     @Override
@@ -119,7 +121,7 @@ public class ContactListFragment extends Fragment implements ContactListPresente
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         contactListPresenter = new ContactListPresenter(getContext());
-        contactListPresenter.attachContactFragment(this);
+        contactListPresenter.attachContactView(this);
         if (savedInstanceState == null) {
             progressBarContactList.setVisibility(View.VISIBLE);
             contactListPresenter.findContactList();
@@ -133,7 +135,8 @@ public class ContactListFragment extends Fragment implements ContactListPresente
     private void createContactListRecyclerAdapter(List<Contact> contactList) {
         contactListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         contactListRecyclerAdapter = new ContactListRecyclerAdapter(context, contactList);
-        contactListRecyclerAdapter.setDeleting(deleting);
+        contactListRecyclerAdapter.setDelete(delete);
+        contactListRecyclerAdapter.setDeletingListView(deletingListView);
         contactListRecyclerView.setAdapter(contactListRecyclerAdapter);
         contactListRecyclerView.setVisibility(View.VISIBLE);
     }
@@ -152,29 +155,18 @@ public class ContactListFragment extends Fragment implements ContactListPresente
         contactListPresenter.findContactList().dispose();
     }
 
-    /*TODO check emptyList*/
     @Override
     public void displayContactList(List<Contact> contacts) {
-        if (contacts.isEmpty()) {
-            emptyContactList();
-        } else {
-            emptyContactList.setVisibility(View.GONE);
-            swipeContactListContainer.setRefreshing(false);
-            progressBarContactList.setVisibility(View.GONE);
-            createContactListRecyclerAdapter(contacts);
-        }
-    }
-
-    private void emptyContactList() {
-        emptyContactList.setVisibility(View.VISIBLE);
         swipeContactListContainer.setRefreshing(false);
         progressBarContactList.setVisibility(View.GONE);
+        createContactListRecyclerAdapter(contacts);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         contactListPresenter.findContactList().dispose();
+        contactListPresenter.detachContactView();
     }
 
     @Override
@@ -222,7 +214,7 @@ public class ContactListFragment extends Fragment implements ContactListPresente
             if (loadingProgressBar != null && loadingProgressBar) {
                 progressBarContactList.setVisibility(View.VISIBLE);
             } else {
-                SwipeRefreshListState swipeRefreshListState = new SwipeRefreshListState(savedInstanceState);
+                SwipeRefreshListState swipeRefreshListState = new SwipeRefreshListState();
                 contextContentView.setStateContent(swipeRefreshListState);
                 contextContentView.displayContent();
             }
@@ -231,12 +223,6 @@ public class ContactListFragment extends Fragment implements ContactListPresente
     }
 
     public class SwipeRefreshListState implements StateContent {
-        private final Bundle savedInstanceState;
-
-        public SwipeRefreshListState(final Bundle savedInstanceState) {
-            this.savedInstanceState = savedInstanceState;
-        }
-
         @Override
         public void displayContent() {
             swipeContactListContainer.setRefreshing(true);
@@ -254,5 +240,4 @@ public class ContactListFragment extends Fragment implements ContactListPresente
             stateContent.displayContent();
         }
     }
-
 }

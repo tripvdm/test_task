@@ -29,8 +29,12 @@ public class ContactListPresenter {
         database = Room.databaseBuilder(context, AppDatabase.class, "contact").build();
     }
 
-    public void attachContactFragment(ContactListView contactListView) {
+    public void attachContactView(ContactListView contactListView) {
         this.contactListView = contactListView;
+    }
+
+    public void detachContactView() {
+        contactListView = null;
     }
 
     public Disposable findContactList() {
