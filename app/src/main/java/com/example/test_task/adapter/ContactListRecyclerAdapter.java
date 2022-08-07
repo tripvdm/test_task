@@ -2,20 +2,21 @@ package com.example.test_task.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test_task.R;
+import com.example.test_task.fragment.StatisticFragment;
 import com.example.test_task.model.Contact;
+import com.example.test_task.presenter.DeletingListPresenter;
 
 import java.util.List;
 
@@ -25,15 +26,20 @@ import butterknife.ButterKnife;
 public class ContactListRecyclerAdapter extends RecyclerView.Adapter<ContactListRecyclerAdapter.ContactViewHolder> {
     private final LayoutInflater layoutInflater;
     private final List<Contact> contactList;
-    private boolean deleting;
+    private DeletingListPresenter.DeletingListView deletingListView;
+    private boolean delete;
 
     public ContactListRecyclerAdapter(Context context, List<Contact> contactList) {
         layoutInflater = LayoutInflater.from(context);
         this.contactList = contactList;
     }
 
-    public void setDeleting(boolean deleting) {
-        this.deleting = deleting;
+    public void setDeletingListView(DeletingListPresenter.DeletingListView deletingListView) {
+        this.deletingListView = deletingListView;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     @NonNull
@@ -59,7 +65,7 @@ public class ContactListRecyclerAdapter extends RecyclerView.Adapter<ContactList
     public Contact[] getContactDataArray() {
         return contactList.toArray(new Contact[contactList.size()]);
     }
-    
+
     public class ContactViewHolder extends RecyclerView.ViewHolder {
         @SuppressLint("NonConstantResourceId")
         @BindView(R.id.layoutContact)
@@ -77,17 +83,23 @@ public class ContactListRecyclerAdapter extends RecyclerView.Adapter<ContactList
         @BindView(R.id.phone)
         TextView phone;
 
+        private final DeletingListPresenter deletingListPresenter;
+
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
             Context context = itemView.getContext();
             ButterKnife.bind(this, itemView);
-            if (deleting) {
+            deletingListPresenter = new DeletingListPresenter(context);
+            deletingListPresenter.attachDeletingListView(deletingListView);
+            if (delete) {
                 layoutContact.setOnClickListener(view ->
                         new AlertDialog.Builder(context)
-                        .setTitle(R.string.deleting)
-                        .setMessage("Вы действительно хотите удалить?")
+                        .setMessage("Вы действительно хотите удалить контакт?")
                         .setPositiveButton(android.R.string.yes,
-                                (dialog, whichButton) -> {/*TODO in presenter*/})
+                                (dialog, whichButton) -> {
+                                    Contact contact = contactList.get(getAdapterPosition());
+                                    deletingListPresenter.deleteContact(contact);
+                                })
                         .setNegativeButton(android.R.string.no, null).show());
             }
         }
