@@ -64,11 +64,11 @@ public class StatisticFragment extends Fragment implements StatisticPresenter.St
         if (savedInstanceState == null) {
             statisticPresenter.findOfStatistic();
         } else {
-            Statistic statistic = (Statistic) savedInstanceState.get("countOfRecords");
+            Statistic statistic = (Statistic) savedInstanceState.get("statistic");
             displayStatistic(statistic);
         }
     }
-    
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

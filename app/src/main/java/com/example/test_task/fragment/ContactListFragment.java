@@ -2,11 +2,15 @@ package com.example.test_task.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -31,6 +35,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,29 +97,73 @@ public class ContactListFragment extends Fragment implements ContactListPresente
                 contactListPresenter.findContactList();
             }
         });
+        Contact contact = new Contact();
         addContact.setOnClickListener(v -> {
-            AlertDialog.Builder builder
-                    = new AlertDialog.Builder(context);
-            builder.setTitle("Добавление контакта");
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
             final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog, null);
-            builder.setView(customLayout);
-            builder.setPositiveButton("Добавить",
-                    (dialog, which) -> {
-                        EditText editName = customLayout.findViewById(R.id.editName);
-                        EditText editEmail = customLayout.findViewById(R.id.editEmail);
-                        EditText editPhone = customLayout.findViewById(R.id.editPhone);
-                        Contact contact = new Contact();
-                        contact.setName(editName.getText().toString());
-                        contact.setEmail(editEmail.getText().toString());
-                        contact.setPhone(editPhone.getText().toString());
-                        AddContactPresenter addContactPresenter = new AddContactPresenter(context);
-                        addContactPresenter.attachContactFragment(this);
-                        addContactPresenter.addContact(contact);
-                    });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            AlertDialog alertDialog = builder.setView(customLayout)
+                    .setPositiveButton("Добавить", (dialogInterface, i) -> handlePositiveButton(contact)).show();
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            EditText editName = customLayout.findViewById(R.id.editName);
+            editName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    contact.setName(String.valueOf(charSequence));
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) { }
+            });
+
+            EditText editEmail = customLayout.findViewById(R.id.editEmail);
+            editEmail.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    if (checkEmail(String.valueOf(charSequence))) {
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        contact.setEmail(String.valueOf(charSequence));
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) { }
+            });
+
+            EditText editPhone = customLayout.findViewById(R.id.editPhone);
+            editPhone.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    contact.setPhone(charSequence.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) { }
+            });
         });
         return view;
+    }
+
+    private boolean checkEmail(String email) {
+        String regex = "^(.+)@(.+)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void handlePositiveButton(Contact contact) {
+            AddContactPresenter addContactPresenter = new AddContactPresenter(context);
+            addContactPresenter.attachContactFragment(ContactListFragment.this);
+            addContactPresenter.addContact(contact);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

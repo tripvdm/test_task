@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.test_task.fragment.ContactListFragment;
@@ -60,11 +61,14 @@ public class MainActivity extends AppCompatActivity implements DeletingListPrese
                     fragmentTransaction.commit();
                     return true;
                 case R.id.statistic:
-                    actionBar.setTitle(R.string.titleStatistic);
-                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.content, new StatisticFragment());
-                    fragmentTransaction.commit();
-                    return true;
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if (!fragmentManager.isDestroyed()) {
+                        actionBar.setTitle(R.string.titleStatistic);
+                        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.content, new StatisticFragment());
+                        fragmentTransaction.commit();
+                        return true;
+                    }
             }
             return false;
         }
