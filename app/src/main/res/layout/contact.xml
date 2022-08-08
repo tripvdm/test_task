@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:layout_weight="1"
     android:padding="10dp"
+    android:layout_marginStart="15dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <TextView

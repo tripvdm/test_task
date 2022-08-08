@@ -2,7 +2,6 @@ package com.example.test_task.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,7 +9,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -42,8 +40,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ContactListFragment extends Fragment implements ContactListPresenter.ContactListView, AddContactPresenter.AddContactView {
-    private static final String TAG = ContactListFragment.class.getSimpleName();
-
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.swipeContactListContainer)
     SwipeRefreshLayout swipeContactListContainer;
@@ -97,10 +93,10 @@ public class ContactListFragment extends Fragment implements ContactListPresente
                 contactListPresenter.findContactList();
             }
         });
-        Contact contact = new Contact();
         addContact.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog, null);
+            Contact contact = new Contact();
             AlertDialog alertDialog = builder.setView(customLayout)
                     .setPositiveButton("Добавить", (dialogInterface, i) -> handlePositiveButton(contact)).show();
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
@@ -152,6 +148,13 @@ public class ContactListFragment extends Fragment implements ContactListPresente
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void handlePositiveButton(Contact contact) {
+        AddContactPresenter addContactPresenter = new AddContactPresenter(context);
+        addContactPresenter.attachContactFragment(ContactListFragment.this);
+        addContactPresenter.addContact(contact);
+    }
+
     private boolean checkEmail(String email) {
         String regex = "^(.+)@(.+)$";
         Pattern pattern = Pattern.compile(regex);
@@ -160,17 +163,10 @@ public class ContactListFragment extends Fragment implements ContactListPresente
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void handlePositiveButton(Contact contact) {
-            AddContactPresenter addContactPresenter = new AddContactPresenter(context);
-            addContactPresenter.attachContactFragment(ContactListFragment.this);
-            addContactPresenter.addContact(contact);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        contactListPresenter = new ContactListPresenter(getContext());
+        contactListPresenter = new ContactListPresenter(context);
         contactListPresenter.attachContactView(this);
         if (savedInstanceState == null) {
             progressBarContactList.setVisibility(View.VISIBLE);
@@ -223,6 +219,7 @@ public class ContactListFragment extends Fragment implements ContactListPresente
     public void displayResponse() {
         Toast.makeText(context, "Данные успешно добавлены", Toast.LENGTH_SHORT).show();
     }
+
     public interface StateContent {
         void displayContent();
     }

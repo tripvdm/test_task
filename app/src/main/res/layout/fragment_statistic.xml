@@ -17,19 +17,16 @@
             android:id="@+id/countRecords"
             android:layout_width="match_parent"
             android:layout_height="53dp"
-            android:layout_weight="1"
             android:gravity="center" />
         <TextView
             android:id="@+id/timeOfFirstRecord"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_weight="1"
             android:gravity="center" />
         <TextView
             android:id="@+id/timeOfLastRecord"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_weight="1"
             android:gravity="center" />
     </LinearLayout>
 </LinearLayout>

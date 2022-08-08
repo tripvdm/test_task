@@ -19,8 +19,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class StatisticPresenter {
     private final AppDatabase appDatabase;
-    private StatisticView statisticView;
     private final Statistic statistic;
+    private StatisticView statisticView;
 
     public StatisticPresenter(final Context context) {
         statistic = new Statistic();
@@ -42,19 +42,23 @@ public class StatisticPresenter {
         return Observable.create((ObservableOnSubscribe<Contact>) emitter -> {
             ContactDao contactDao = appDatabase.contactDao();
             List<Contact> contacts = contactDao.findAll();
-            int records = contacts.size();
-            if (records > 0) {
-                statistic.setCountOfRecords(records);
-                String dateOfFirstRecord = contacts.get(0).getDate();
-                statistic.setDateOfFirstRecord(dateOfFirstRecord);
-                String dateOfLastRecord = contacts.get(records - 1).getDate();
-                statistic.setDateOfLastRecord(dateOfLastRecord);
-            }
+            setFieldsForStatistic(contacts);
             emitter.onComplete();
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(() -> statisticView.displayStatistic(statistic))
                 .subscribe();
+    }
+
+    private void setFieldsForStatistic(List<Contact> contacts) {
+        int records = contacts.size();
+        if (records > 0) {
+            statistic.setCountOfRecords(records);
+            String dateOfFirstRecord = contacts.get(0).getDate();
+            statistic.setDateOfFirstRecord(dateOfFirstRecord);
+            String dateOfLastRecord = contacts.get(records - 1).getDate();
+            statistic.setDateOfLastRecord(dateOfLastRecord);
+        }
     }
 
     public Statistic getStatistic() {

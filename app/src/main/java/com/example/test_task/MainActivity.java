@@ -21,11 +21,10 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements DeletingListPresenter.DeletingListView {
     @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.navigation)
+    @BindView(R.id.bottomNavigation)
     BottomNavigationView bottomNavigationView;
 
     private ActionBar actionBar;
-    private FragmentTransaction fragmentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements DeletingListPrese
         @SuppressLint("NonConstantResourceId")
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            FragmentTransaction fragmentTransaction;
             switch (menuItem.getItemId()) {
                 case R.id.list:
                     actionBar.setTitle(R.string.app_name);

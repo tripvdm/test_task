@@ -22,8 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class StatisticFragment extends Fragment implements StatisticPresenter.StatisticView {
-    public static final String TAG = StatisticFragment.class.getSimpleName();
-
     @SuppressLint("NonConstantResourceId")
     @BindView(R.id.countRecords)
     TextView countOfRecords;

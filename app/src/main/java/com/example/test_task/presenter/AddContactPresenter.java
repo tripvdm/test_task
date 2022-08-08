@@ -19,13 +19,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class AddContactPresenter {
-    private static final String TAG = AddContactPresenter.class.getSimpleName();
-
     private final AppDatabase database;
     private AddContactView addContactView;
 
     public AddContactPresenter(Context context) {
         database = Room.databaseBuilder(context, AppDatabase.class, "contact").build();
+    }
+
+    public void attachContactFragment(AddContactView addContactView) {
+        this.addContactView = addContactView;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -40,10 +42,6 @@ public class AddContactPresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnComplete(() -> addContactView.displayResponse())
                 .subscribe();
-    }
-
-    public void attachContactFragment(AddContactView addContactView) {
-        this.addContactView = addContactView;
     }
 
     public interface AddContactView {
