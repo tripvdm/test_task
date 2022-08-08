@@ -33,9 +33,9 @@ public class AddContactPresenter {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void addContact(Contact contact) {
         Observable.create((ObservableOnSubscribe<Contact>) emitter -> {
-            ContactDao contactDao = database.contactDao();
             LocalDateTime localDateTime = LocalDateTime.now();
             contact.setDate(localDateTime.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+            ContactDao contactDao = database.contactDao();
             contactDao.insert(contact);
             emitter.onComplete();
         }).subscribeOn(Schedulers.io())
